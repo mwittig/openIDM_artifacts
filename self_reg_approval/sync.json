@@ -1,0 +1,55 @@
+{
+    "mappings" : [
+        {
+            "name" : "managedUser_systemACMEPolicies",
+            "source" : "managed/user",
+            "target" : "system/acme/policy",
+            "correlationQuery" : {
+                "type" : "text/javascript",
+                "file" : "script/correlationManagedUser2Acme.js"
+            },
+            "onUnlink" : {
+                "type" : "text/javascript",
+                "file" : "script/unVerifyUser.js"
+            },
+            "policies" : [
+                {
+                    "situation" : "CONFIRMED",
+                    "action" : "IGNORE"
+                },
+                {
+                    "situation" : "FOUND",
+                    "action" : {
+                        "workflowName" : "signupApproval",
+                        "type" : "text/javascript",
+                        "file" : "bin/defaults/script/workflow/workflow.js"
+                    }
+                },
+                {
+                    "situation" : "ABSENT",
+                    "action" : "IGNORE"
+                },
+                {
+                    "situation" : "AMBIGUOUS",
+                    "action" : "IGNORE"
+                },
+                {
+                    "situation" : "MISSING",
+                    "action" : "UNLINK"
+                },
+                {
+                    "situation" : "SOURCE_MISSING",
+                    "action" : "IGNORE"
+                },
+                {
+                    "situation" : "UNQUALIFIED",
+                    "action" : "IGNORE"
+                },
+                {
+                    "situation" : "UNASSIGNED",
+                    "action" : "IGNORE"
+                }
+            ]
+        }
+    ]
+}

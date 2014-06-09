@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<definitions id="definitions"
+             xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:activiti="http://activiti.org/bpmn"
+             targetNamespace="Examples" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="
+             http://www.omg.org/spec/BPMN/20100524/MODEL http://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd">
+
+    <process id="signupApproval" name="Self Service Approval Workflow">
+        
+        <startEvent id="start"/>
+        
+        <sequenceFlow sourceRef="start" targetRef="evaluateRequest"/>
+        
+        <userTask id="evaluateRequest" name="Evaluate request" activiti:assignee="openidm-admin">
+            <extensionElements> 
+                <activiti:formProperty id="requesterName" name="Requesting User" expression="${sourceId}" writable="false"/>
+                <activiti:formProperty id="requestApproved"  name="Do you approve the request?" required="true" type="enum">
+                    <activiti:value id="true" name="Yes"/>
+                    <activiti:value id="false" name="No"/>
+                </activiti:formProperty>
+            </extensionElements>
+        </userTask>
+        
+        <sequenceFlow sourceRef="evaluateRequest" targetRef="verifyUser"/>
+        
+        <scriptTask id="verifyUser" scriptFormat="groovy">
+            <script>
+                <![CDATA[
+                if (requestApproved == 'true') {
+                  
+	                user = openidm.read('managed/user/' + sourceId);
+					revision = user['_rev'].toString();
+					changeMap = new java.util.HashMap();
+					changeMap.put('replace','verified');
+					changeMap.put('value', 'true')
+					list = new java.util.ArrayList() 
+					list.add(changeMap)
+					change = new org.forgerock.json.fluent.JsonValue(list)
+					openidm.patch('managed/user/' + sourceId, revision, new org.forgerock.openidm.patch.JsonPatchWrapper(change))
+                    
+                };
+                ]]>
+            </script>
+        </scriptTask>
+        
+        
+        <sequenceFlow sourceRef="verifyUser" targetRef="end"/>
+        
+        <endEvent id="end"/>
+
+    </process>
+</definitions>
