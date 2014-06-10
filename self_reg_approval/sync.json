@@ -8,10 +8,6 @@
                 "type" : "text/javascript",
                 "file" : "script/correlationManagedUser2Acme.js"
             },
-            "onUnlink" : {
-                "type" : "text/javascript",
-                "file" : "script/unVerifyUser.js"
-            },
             "policies" : [
                 {
                     "situation" : "CONFIRMED",
@@ -27,7 +23,10 @@
                 },
                 {
                     "situation" : "ABSENT",
-                    "action" : "IGNORE"
+                    "action" : {
+                        "type" : "text/javascript",
+                        "file" : "script/unVerifyUser.js"
+                    }
                 },
                 {
                     "situation" : "AMBIGUOUS",
@@ -35,7 +34,7 @@
                 },
                 {
                     "situation" : "MISSING",
-                    "action" : "UNLINK"
+                    "action" : "IGNORE"
                 },
                 {
                     "situation" : "SOURCE_MISSING",
