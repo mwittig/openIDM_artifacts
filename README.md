@@ -15,3 +15,8 @@ the bin/defaults onCreate script to add in a default verified=false.
 <br/>
 The OpenAM dashboard service provides a basic means of giving SSO links to users in the form of a central portal.  You can manipulate which links are available via the assignedDashboard attribute with the OpenAM user store.  This artifact performs
 a basic mapping between the country in OpenIDM and which apps appear in their dashboard.  Tested for OpenIDM 2.1.0
+<br/>
+<br/>
+<b>delegated_admin</b>
+<br/>
+A basic delegated admin model for create, read, update, delete, patch and query operations based on an attribute called "type".  Only admins of the same "type" as the user they are attempting to manage will be accepted.  In this case types could be staff, contractors, or consumers.  Only admins for staff can manage staff for example.  Assumes administrators are grouped via roles.  Tested for OpenIDM 3.0
