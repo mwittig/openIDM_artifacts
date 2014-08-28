@@ -40,7 +40,7 @@ function isSameType(){
     	
 	    console.log("requestedUserType: " + requestedUserType);
 	    //perform compare between user being read/deleted and user performing request
-	    var sameType = (requestedUserType === requestingUserType); 
+	    sameType = (requestedUserType === requestingUserType); 
 	    console.log("sameType: "  + sameType);
     	break;
     
@@ -63,22 +63,32 @@ function isSameType(){
     	
 	    console.log("requestedUserType: " + requestedUserType);
 	    //perform compare between user being read/deleted and user performing request
-	    var sameType = (requestedUserType === requestingUserType); 
+	    sameType = (requestedUserType === requestingUserType); 
 	    console.log("sameType: "  + sameType);
-	    //update then flows down to also check the payload to make sure we're not making a user we are allowed to change into something 		    //we're not allowed to edit
-    
+	  
+	    if (sameType) {
+	    	
+	    }
+	    else {
+	    	
+	    	break;//break out here as the requested user is a different type
+	    }
+	    
+	    //update then flows down to also check the payload to make sure we're not making a user we are allowed to change into something we're not allowed to edit
+          
 
     case "create":
     	
     	//type of the user being submitted in the JSON payload
     	payloadUserType = request.content.type;
-	console.log("payloadUserType: " + payloadUserType);
-	//perform compare between user in the payload and the user performing request
-	var sameType = (payloadUserType === requestingUserType); 
-	console.log("sameType: "  + sameType);
+		console.log("payloadUserType: " + payloadUserType);
+		//perform compare between user in the payload and the user performing request
+		sameType = (payloadUserType === requestingUserType); 
+	    console.log("sameType: "  + sameType);
     	break;
     	
     }
 
-	return sameType;  
+	return sameType;
+   
 }
