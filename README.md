@@ -20,3 +20,12 @@ a basic mapping between the country in OpenIDM and which apps appear in their da
 <b>delegated_admin</b>
 <br/>
 A basic delegated admin model for create, read, update, delete, patch and query operations based on an attribute called "type".  Only admins of the same "type" as the user they are attempting to manage will be accepted.  In this case types could be staff, contractors, or consumers.  Only admins for staff can manage staff for example.  Assumes administrators are grouped via roles.  Tested for OpenIDM 3.0
+<br/>
+<br/>
+<b>email_verification</b>
+<br/>
+Adds basic email verification service, that can be used during the self-service registration piece.  Creates a URL that is sent to the users registeration email address that corresponds to a custom
+endpoint that verifies the code and updates the user record if the codes match.  See this entry for further details - https://wikis.forgerock.org/confluence/display/openidm/Custom+Endpoint+Email+Verification+Example
+<br/>
+<br/>
+

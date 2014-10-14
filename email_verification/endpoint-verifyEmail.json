@@ -1,0 +1,5 @@
+{
+    "context" : "endpoint/verifyEmail",
+    "type" : "text/javascript",
+    "file" : "script/verifyEmail.js"
+}
