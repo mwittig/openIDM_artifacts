@@ -1,0 +1,92 @@
+{
+    "name" : "pcsRequests",
+    "connectorRef" : {
+        "bundleName" : "org.forgerock.openicf.connectors.csvfile-connector",
+        "bundleVersion" : "1.1.0.2",
+        "connectorName" : "org.forgerock.openicf.csvfile.CSVFileConnector"
+    },
+    "poolConfigOption" : {
+        "maxObjects" : 10,
+        "maxIdle" : 10,
+        "maxWait" : 150000,
+        "minEvictableIdleTimeMillis" : 120000,
+        "minIdle" : 1
+    },
+    "operationTimeout" : {
+        "CREATE" : -1,
+        "VALIDATE" : -1,
+        "TEST" : -1,
+        "SCRIPT_ON_CONNECTOR" : -1,
+        "SCHEMA" : -1,
+        "DELETE" : -1,
+        "UPDATE" : -1,
+        "SYNC" : -1,
+        "AUTHENTICATE" : -1,
+        "GET" : -1,
+        "SCRIPT_ON_RESOURCE" : -1,
+        "SEARCH" : -1
+    },
+    "configurationProperties" : {
+        "filePath" : "&{launcher.project.location}/script/pcs/requests.csv",
+        "uniqueAttribute" : "requestId",
+        "nameAttribute" : "requestId",
+        "passwordAttribute" : ""
+    },
+    "syncFailureHandler" : {
+        "maxRetries" : 5,
+        "postRetryAction" : "logged-ignore"
+    },
+    "objectTypes" : {
+        "request" : {
+            "$schema" : "http://json-schema.org/draft-03/schema",
+            "id" : "__ACCOUNT__",
+            "type" : "object",
+            "nativeType" : "__ACCOUNT__",
+            "properties" : {
+                "requestId" : {
+                    "type" : "string",
+                    "required" : true,
+                    "nativeName" : "__NAME__",
+                    "nativeType" : "string"
+                },
+                "requestTime" : {
+                    "type" : "string",
+                    "required" : true,
+                    "nativeName" : "requestTime",
+                    "nativeType" : "string"
+                },
+                "account" : {
+                    "type" : "string",
+                    "required" : true,
+                    "nativeName" : "account",
+                    "nativeType" : "string"
+                },
+                "accountPath" : {
+                    "type" : "string",
+                    "required" : true,
+                    "nativeName" : "accountPath",
+                    "nativeType" : "string"
+                },
+                "resetTime" : {
+                    "type" : "string",
+                    "required" : true,
+                    "nativeName" : "resetTime",
+                    "nativeType" : "string"
+                },
+                "checkedOutBy" : {
+                    "type" : "string",
+                    "required" : true,
+                    "nativeName" : "checkedOutBy",
+                    "nativeType" : "string"
+                },
+                "checkoutActive" : {
+                    "type" : "string",
+                    "required" : true,
+                    "nativeName" : "checkoutActive",
+                    "nativeType" : "string"
+                }
+            }
+        }
+    },
+    "operationOptions" : { }
+}

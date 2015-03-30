@@ -1,0 +1,5 @@
+"requestId","requestTime","accountPath","account","resetTime","checkoutActive","checkedOutBy"
+"1427728716882_managed_user_d4a2b0d0-2431-415f-87c2-eaef99af42aa","2015-03-30T15:18:36.882Z","managed/user/d4a2b0d0-2431-415f-87c2-eaef99af42aa","smof","2015-03-30T15:20:36.882Z","false","openidm-admin"
+"1427738383165_managed_user_d4a2b0d0-2431-415f-87c2-eaef99af42aa","2015-03-30T17:59:43.165Z","managed/user/d4a2b0d0-2431-415f-87c2-eaef99af42aa","smof","2015-03-30T18:01:43.165Z","false","openidm-admin"
+"1427738832260_managed_user_d4a2b0d0-2431-415f-87c2-eaef99af42aa","2015-03-30T18:07:12.260Z","managed/user/d4a2b0d0-2431-415f-87c2-eaef99af42aa","smof","2015-03-30T18:09:12.260Z","false","openidm-admin"
+"1427739332569_managed_user_d4a2b0d0-2431-415f-87c2-eaef99af42aa","2015-03-30T18:15:32.569Z","managed/user/d4a2b0d0-2431-415f-87c2-eaef99af42aa","smof","2015-03-30T18:17:32.569Z","false","openidm-admin"
