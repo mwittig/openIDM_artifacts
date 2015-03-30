@@ -10,18 +10,23 @@ as-is, with absolutely no warranty.
 This is a basic privileged or shared account vaulting and checkout service.  It allows for the "checking out" of shared accounts to delegated
 individuals, issuing time based complex passwords to certain accounts, with a background scanner reset process.
 <br/>
+<br/>
 To Setup: copy the appropriate files into the respective ../script and ../conf folders of your OpenIDM deployment.  You will need to configure the
 necessary scheduler to your requirements, as well as any password creation settings in the appropriate files.
+<br/>
 <br/>
 The access.js file has been modified to allow only those who are part of the managed/role/passwordCheckoutService to access the endpoint - ie you will
 need to create this role and add the appropriate users to that role to gain access to the endpoint...
 <br/>
-The PCS uses 2 files for storage - ../validAccounts.csv and ../requests.csv.  In product just swap this files for SQL tables.  See the files
+<br/>
+The PCS uses 2 files for storage - ../validAccounts.csv and ../requests.csv.  In production just swap these files for SQL tables.  See the files
 in the ../script directory for attribute definitions. Place the target accounts that can be managed by the PCS in the validAccounts file.
+<br/>
 <br/>
 To use call GET ../openidm/endpoint/pcs?system=managed/AD&account=dhcp_operators
 <br/>
-Follows on from this use case - 
+<br/>
+Follows on from this use case - http://identityrelationshipmanagement.blogspot.co.uk/2015/03/building-password-checkout-service-in.html
 <br/>
 <br/>
 <b>self_reg_approval</b>
