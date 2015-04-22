@@ -18,8 +18,25 @@ var checkedOutBy = context.parent.parent.parent.parent.parent.authenticationId; 
 logger.info("Password Checkout Service - attempting to checkout: " + submittedSystem + "/" + submittedAccount + " to: " + checkedOutBy);
 
 //Find Account using get-by-field-value based on submitted data
-var accountQuery = openidm.query(submittedSystem, { "_queryId" : "get-by-field-value", "field":"userName", "value" : submittedAccount });
+
+//Working out whether querying against the managed/user for testing or downstream system
+if (submittedSystem == "managed/user"){
+
+	var accountQuery = openidm.query(submittedSystem, { "_queryId" : "get-by-field-value", "field":"userName", "value" : submittedAccount });
+	
+} else { //Downstream systems use queryFilter --> albeit might need to change uid to specific account identifier
+
+	queryParams = {
+		    '_queryFilter' : 'uid eq \"' + submittedAccount + '\"'    
+		};
+	
+	var accountQuery = openidm.query(submittedSystem, queryParams)
+	
+}
+
+//Results
 var account = accountQuery.result[0];
+
 //Globals ######################################################
 
 //Resets the submitted account password
@@ -30,11 +47,20 @@ function resetPassword(accountPath){
 	//Get new password from passwordCheckoutServiceUtils.js
 	newPassword = createPW();
 	
+	//Read in existing object
+	oldObject = openidm.read(accountPath);
+	logger.info("Password Checkout Service - account read: " + oldObject);
+	
+	//Perform update --> this needs changing to patch when complete in ICF
+	oldObject.password = newPassword;
+	logger.info("Password Checkout Service - resetting object: " + oldObject);
+	openidm.update(accountPath,null,oldObject);
+	
 	//Create a patch to submit
-	var patch = [{ "operation" : "replace" , "field" : "password", "value" : newPassword }];
+	//var patch = [{ "operation" : "replace" , "field" : "password", "value" : newPassword }];
 
 	//openidm.patch(submittedSystem + "/" + account["_id"], null, patch);
-	openidm.patch(accountPath, null, patch);
+	//openidm.patch(accountPath, null, patch);
 	
 	logger.info("Password Checkout Service - reset complete: " + accountPath + " checked out to: " + checkedOutBy + " for: " + newPasswordResetHours + " hours & "
 			+ newPasswordResetMinutes + " mins");

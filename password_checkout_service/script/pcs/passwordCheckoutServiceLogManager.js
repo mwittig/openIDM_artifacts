@@ -9,7 +9,7 @@ function storeRequest(){
 		
 	requestToStore={};
 	
-	requestToStore.requestId = nowTimeStamp.getTime().toString() + "_" + submittedSystem.replace("/","_") + "_" + account["_id"]; //Generated GUID 
+	requestToStore.requestId = nowTimeStamp.getTime().toString() + "_" + submittedSystem.replace(/\//g,"_") + "_" + account["_id"]; //Generated GUID 
 	requestToStore.requestTime = nowTimeStamp.toISOString().toString(); //ISO8601 standard time format
 	requestToStore.accountPath = submittedSystem + "/" + account["_id"]; //Path of the account having the password reset
 	requestToStore.account = submittedAccount;
