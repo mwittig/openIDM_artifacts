@@ -53,7 +53,6 @@ function resetPassword(accountPath){
 	
 	//Perform update --> this needs changing to patch when complete in ICF
 	oldObject.password = newPassword;
-	logger.info("Password Checkout Service - resetting object: " + oldObject);
 	openidm.update(accountPath,null,oldObject);
 	
 	//Create a patch to submit
