@@ -15,9 +15,17 @@ function resetPassword(accountPath){
 	//Get new password from passwordCheckoutServiceUtils.js
 	newPassword = createPW();
 	
-	//Create a patch to reset password
-	var patch = [{ "operation" : "replace" , "field" : "password", "value" : newPassword }];
-	openidm.patch(accountPath, null, patch);
+	//Read in existing object
+	oldObject = openidm.read(accountPath);
+	logger.info("Password Checkout Service Background Scanner - account read for reset: " + oldObject);
+	
+	//Perform update --> this needs changing to patch when complete in ICF
+	oldObject.password = newPassword;
+	openidm.update(accountPath,null,oldObject);
+		
+	//Create a patch to reset password --> needs implementing via new ICF
+	//var patch = [{ "operation" : "replace" , "field" : "password", "value" : newPassword }];
+	//openidm.patch(accountPath, null, patch);
 		
 }
 
