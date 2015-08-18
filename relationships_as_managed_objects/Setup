@@ -1,0 +1,8 @@
+Copy the appropriate script files into your openidm/script folder.
+Copy the appropriate conf files into your openidm/conf folder.
+
+Set the appropriate permissions for acccess to the endpoint/childManager endpoint in the script/access.js file.
+
+The managed.json file already contains the necessary managed objects and on hook placements.
+
+Edit the script files if you need to change the flow or logic.
