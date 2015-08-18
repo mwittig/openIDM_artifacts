@@ -52,12 +52,15 @@ Adds basic email verification service, that can be used during the self-service 
 endpoint that verifies the code and updates the user record if the codes match.  See this entry for further details - https://wikis.forgerock.org/confluence/display/openidm/Custom+Endpoint+Email+Verification+Example
 <br/>
 <br/>
-<b>relations_as_managed_objects</b>
+<b>relationships_as_managed_objects</b>
 <br/>
 This samples models relationships between different managed objects, as managed objects themselves.  An example is the relationship between a parent and child, being handled via a new managed object
 type called family.  This is implemented via basic managed object hook scripts, such as onDelete, postCreate and so on.  Copy the scripts to the appropriate folder. An endpoint is used to create the 
 child object, in order to capture the creators _id and store that server side.
 <br/>
+The endpoint to create a child is handled via ../openidm/endpoint/childManager?_action=create, with the normal JSON payload for creating a child object being sent in the POST.
+<br/>
+A full write up is available here - http://identityrelationshipmanagement.blogspot.co.uk/2015/08/openidm-relationships-as-first-class.html
 <br/>
 
 
