@@ -1,0 +1,14 @@
+{
+  "_id": "b58a8d74-cd9a-4a4d-bd22-6a221ddd6b0c",
+  "_rev": "3",
+  "approvers": [
+    "managed/parent/99247ef1-d219-4840-85ae-2fc7a2e3c2a6"
+  ],
+  "parents": [
+    "managed/parent/99247ef1-d219-4840-85ae-2fc7a2e3c2a6"
+  ],
+  "name": "Smith_Family",
+  "children": [
+    "managed/child/c6ee65de-6d06-40c3-b17c-ef11d7c2aaa1"
+  ]
+}

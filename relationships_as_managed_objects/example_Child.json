@@ -1,0 +1,24 @@
+{
+      "userName": "child1",
+      "_id": "c6ee65de-6d06-40c3-b17c-ef11d7c2aaa1",
+      "_rev": "6",
+      "roles": [
+        "openidm-authorized"
+      ],
+      "country": "",
+      "lastPasswordAttempt": "",
+      "status": "active",
+      "sn": "Smith",
+      "mail": "child1@acme.com",
+      "lastSecurityAnswerAttempt": "",
+      "password": "Passw0rd",
+      "givenName": "child1",
+      "passwordAttempts": "0",
+      "city": "",
+      "lastPasswordSet": "",
+      "postalCode": "",
+      "accountStatus": "active",
+      "stateProvince": "",
+      "family": "managed/family/b58a8d74-cd9a-4a4d-bd22-6a221ddd6b0c",
+      "creator": "managed/parent/99247ef1-d219-4840-85ae-2fc7a2e3c2a6"
+    }

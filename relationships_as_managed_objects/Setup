@@ -6,3 +6,5 @@ Set the appropriate permissions for acccess to the endpoint/childManager endpoin
 The managed.json file already contains the necessary managed objects and on hook placements.
 
 Edit the script files if you need to change the flow or logic.
+
+To create a child send a JSON payload to ../openidm/endpoint/childManager?action=child whilst logged in as a parent - this is important.  Being logged in as openidm-admin will fail.
