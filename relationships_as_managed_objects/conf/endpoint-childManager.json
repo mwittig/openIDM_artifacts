@@ -1,0 +1,5 @@
+{
+    "context" : "endpoint/childManager",
+    "type" : "text/javascript",
+    "file" : "script/childManagerEndpoint.js"
+}
