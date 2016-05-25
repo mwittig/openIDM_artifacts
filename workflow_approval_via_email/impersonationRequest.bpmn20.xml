@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="Examples" id="definitions" xsi:schemaLocation="              http://www.omg.org/spec/BPMN/20100524/MODEL http://local.openicf.forgerock.org/BPMN20.xsd">
+    <process id="impersonationRequest" name="Impersonation Request" isExecutable="true" activiti:autoStoreVariables="true">
+ 
+        <startEvent id="start" activiti:initiator="startUserId">
+        
+        
+        </startEvent>
+        
+        <sequenceFlow id="sequenceFlow-8062e9e1-5513-4a5e-af0f-b97509ecba34" sourceRef="start" targetRef="userAccessRequest"></sequenceFlow>
+             
+        <userTask id="userAccessRequest" name="Impersonation Request" activiti:assignee="${startUserId}">
+            <extensionElements>
+                <activiti:formProperty id="idToImpersonate" name="User to Impersonate " type="string" required="true"></activiti:formProperty>
+                <activiti:formProperty id="lengthOfImpersonation" name="Impersonation Length (minutes)" type="enum" required="true">
+                    <activiti:value id="5" name="5"></activiti:value>
+                    <activiti:value id="10" name="10"></activiti:value>
+                    <activiti:value id="15" name="15"></activiti:value>
+                    <activiti:value id="30" name="30"></activiti:value>
+                </activiti:formProperty>
+            </extensionElements>
+        </userTask>
+        
+        <sequenceFlow id="sequenceFlow-4dbe55c6-05e3-4635-ad4a-cb6c7e1ef18d" sourceRef="userAccessRequest" targetRef="patchEnduser"></sequenceFlow>
+
+        <scriptTask name="Patch Enduser" id="patchEnduser" scriptFormat="groovy" >
+            <script>
+                
+                //Generate verification codes and strip out just the data attribute
+                approvalCode=openidm.hash(idToImpersonate + "-" + startUserId + "-" + "approve" + "-" + System.currentTimeMillis(),"SHA-256").$crypto.value.data
+                rejectCode=openidm.hash(idToImpersonate + "-" + startUserId + "-" + "reject" + "-" + System.currentTimeMillis(),"SHA-256").$crypto.value.data
+                
+                //Set values in Activiti API
+                execution.setVariable('approvalCode', approvalCode)
+                execution.setVariable('rejectCode', rejectCode)
+                
+				//Custom endpoint URL in IDM that will receive the payload 
+				approveEndpoint = "http://openidm.example.com:8081/openidm/endpoint/approveImpersonation"
+				rejectEndpoint = "http://openidm.example.com:8081/openidm/endpoint/rejectImpersonation"
+				
+				//Approve ==================================================================================================================
+				//The workflow specific user and verification code
+				def payload = [user : idToImpersonate, code : approvalCode]
+				
+				//Encrypt this payload
+				def encryptedPayload = openidm.encrypt(payload,"AES/CBC/PKCS5Padding","openidm-sym-default")
+				
+				//Convert to string for easy transit
+				encryptedPayloadAsString = new groovy.json.JsonBuilder(encryptedPayload).toString()
+				
+				//Correctly encode the payload						
+				encodedEncryptedPayload = URLEncoder.encode(encryptedPayloadAsString, "UTF-8")
+				
+				//Build the URL
+				finalURL = approveEndpoint + "?payload=" + encodedEncryptedPayload
+				
+				//Save to user for testing
+				//Update the end user with the verification codes
+                queryParams = ["_queryFilter": '/userName eq "'+idToImpersonate+'"']
+                userToPatch = openidm.query("managed/user", queryParams)     
+				patchParams = [[operation:'replace', field: 'encryptedPayload', value : finalURL]]
+				openidm.patch('managed/user/'+userToPatch.result[0]._id, null, patchParams)
+				
+             	//Approve ==================================================================================================================
+             	
+             	
+             	
+            </script>
+        </scriptTask>
+        
+        <sequenceFlow id="sequenceFlow-4dbe55c6-05e3-4635-ad4a-cb6c7e1ef18e" sourceRef="patchEnduser" targetRef="userApproval"></sequenceFlow>
+        
+        <userTask id="userApproval" name="Impersonation Access Request Approval" activiti:assignee="${idToImpersonate}" activiti:autoStoreVariables="true">
+   
+            <extensionElements>
+            		<activiti:formProperty id="requester" name="Requester" type="string" expression="#{startUserId}" writable="false"></activiti:formProperty>
+                <activiti:formProperty id="lengthOfImpersonation" name="Impersonation Length (minutes)" type="string" writable="false"></activiti:formProperty>
+                <activiti:formProperty id="userDecision" name="Decision" type="enum" required="true">
+                    <activiti:value id="accept" name="Accept"></activiti:value>
+                    <activiti:value id="reject" name="Reject"></activiti:value>
+                </activiti:formProperty>
+            </extensionElements>
+        </userTask>
+        
+        <sequenceFlow id="sequenceFlow-2cbc9ec2-38df-4f18-b67e-bb771086c9c5" sourceRef="userApproval" targetRef="userDecisionMadeGateway"></sequenceFlow>
+        
+        <exclusiveGateway id="userDecisionMadeGateway" name="User Decision Made"></exclusiveGateway>
+        
+        <sequenceFlow id="sequenceFlow-171bc1f0-6bcc-47db-9e9d-0fab640588ba" sourceRef="userDecisionMadeGateway" targetRef="patchRequestingUser">
+            <conditionExpression xsi:type="tFormalExpression"><![CDATA[${userDecision=='accept'}]]></conditionExpression>
+        </sequenceFlow>
+
+        <scriptTask name="Patch User" id="patchRequestingUser" scriptFormat="groovy" activiti:autoStoreVariables="false">
+            <script>
+                
+                queryParams = ["_queryFilter": '/userName eq "'+startUserId+'"']
+                userToPatch = openidm.query("managed/user", queryParams)
+ 
+                patchParams = [[operation:'replace', field: 'idToImpersonate', value : idToImpersonate]]
+                openidm.patch('managed/user/'+userToPatch.result[0]._id, null, patchParams)
+            </script>
+        </scriptTask>
+    
+        <sequenceFlow id="sequenceFlow-7c083ca7-f4e4-4c01-80ef-7b50f93f6afc" sourceRef="patchRequestingUser" targetRef="end"></sequenceFlow>
+        
+        <sequenceFlow id="sequenceFlow-2d66e79d-58f8-4527-8b59-a5bb741bcbbb" sourceRef="userDecisionMadeGateway" targetRef="end">
+            <conditionExpression xsi:type="tFormalExpression"><![CDATA[${userDecision=='reject'}]]></conditionExpression>
+        </sequenceFlow>
+        
+        <endEvent id="end"></endEvent>
+    </process>
+ 
+</definitions>
