@@ -32,43 +32,34 @@ def submittedApprovalCode = decryptedObject.code
 def queryParameters = [_queryId:'filtered-query', assignee:submittedUser]
 def queryResult = openidm.query("workflow/taskinstance/", queryParameters)
 
-logger.info("queryResult: {}" + queryResult)
+//Pull out the specific task id
+def taskId = queryResult.result[0]._id //Note this assumes only 1 open task is found, needs a loop if demoing and have lots of open tasks
+//Read that specific task
+def task = openidm.read("workflow/taskinstance/" + taskId)
+//Find the approval verification code embedded within this task
+def taskApprovalCode = task.variables.approvalCode
+	
+//Check if the code in the payload matches the code in the task instance
+if (taskApprovalCode == submittedApprovalCode) {
+		
+	//Complete the workflow - using external REST as openid.action against workflow/taskinstane doesn't support _action=complete 
+	completeWorkflowResponse = openidm.action("external/rest", "call", [
+		"url": "http://openidm.example.com:8081/openidm/workflow/taskinstance/"+taskId+"?_action=complete",
+		"method": "POST",
+		"headers": [
+			"Content-type": "application/json",
+			"X-OpenIDM-Username": "openidm-admin",
+			"X-OpenIDM-Password": "Passw0rd",
+			"Accept-Language": "en-US,en"
+		],
+		"body": '{"userDecision": "accept"}'
+	]);
+	response['message'] = completeWorkflowResponse
+	
+} else {
 
-//If result [] contains something
-if (queryResult.resultCount > 0) {
-	
-	//Pull out the specific task id
-	def taskId = queryResult.result[0]._id //Note this assumes only 1 open task is found, needs a loop if demoing and have lots of open tasks
-	//Read that specific task
-	def task = openidm.read("workflow/taskinstance/" + taskId)
-	//Find the approval verification code embedded within this task
-	def taskApprovalCode = task.variables.approvalCode
-	
-	//Check if the code in the payload matches the code in the task instance
-	if (taskApprovalCode == submittedApprovalCode) {
-		
-		//Complete the workflow - using external REST as openid.action against workflow/taskinstane doesn't support _action=complete 
-		completeWorkflowResponse = openidm.action("external/rest", "call", [
-			"url": "http://openidm.example.com:8081/openidm/workflow/taskinstance/"+taskId+"?_action=complete",
-			"method": "POST",
-			"headers": [
-				"Content-type": "application/json",
-				"X-OpenIDM-Username": "openidm-admin",
-				"X-OpenIDM-Password": "Passw0rd",
-				"Accept-Language": "en-US,en"
-			],
-			"body": '{"userDecision": "accept"}'
-		]);
-		
-		response['message'] = completeWorkflowResponse
-		
-	} else {
-	
-		//Bounce error
-		response['message'] = "Verification code mismatch"
-	}
-	
+	response['message'] = "Task not completed"
 }
+	
+	
 
-//Send something back to caller
-response

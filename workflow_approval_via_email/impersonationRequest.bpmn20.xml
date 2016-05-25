@@ -33,17 +33,18 @@
                 //Set values in Activiti API
                 execution.setVariable('approvalCode', approvalCode)
                 execution.setVariable('rejectCode', rejectCode)
-                
+                execution.setVariable('requesterId', startUserId)
+                                
 				//Custom endpoint URL in IDM that will receive the payload 
 				approveEndpoint = "http://openidm.example.com:8081/openidm/endpoint/approveImpersonation"
 				rejectEndpoint = "http://openidm.example.com:8081/openidm/endpoint/rejectImpersonation"
 				
 				//Approve ==================================================================================================================
 				//The workflow specific user and verification code
-				def payload = [user : idToImpersonate, code : approvalCode]
+				payload = [user : idToImpersonate, code : approvalCode]
 				
 				//Encrypt this payload
-				def encryptedPayload = openidm.encrypt(payload,"AES/CBC/PKCS5Padding","openidm-sym-default")
+				encryptedPayload = openidm.encrypt(payload,"AES/CBC/PKCS5Padding","openidm-sym-default")
 				
 				//Convert to string for easy transit
 				encryptedPayloadAsString = new groovy.json.JsonBuilder(encryptedPayload).toString()
@@ -52,18 +53,39 @@
 				encodedEncryptedPayload = URLEncoder.encode(encryptedPayloadAsString, "UTF-8")
 				
 				//Build the URL
-				finalURL = approveEndpoint + "?payload=" + encodedEncryptedPayload
+				finalApproveURL = approveEndpoint + "?payload=" + encodedEncryptedPayload
+				execution.setVariable('finalApproveURL', finalApproveURL)
 				
 				//Save to user for testing
 				//Update the end user with the verification codes
                 queryParams = ["_queryFilter": '/userName eq "'+idToImpersonate+'"']
-                userToPatch = openidm.query("managed/user", queryParams)     
-				patchParams = [[operation:'replace', field: 'encryptedPayload', value : finalURL]]
-				openidm.patch('managed/user/'+userToPatch.result[0]._id, null, patchParams)
+                enduserObject = openidm.query("managed/user", queryParams)     
+				//patchParams = [[operation:'replace', field: 'encryptedPayload', value : finalURL]]
+				//openidm.patch('managed/user/'+userToPatch.result[0]._id, null, patchParams)
 				
-             	//Approve ==================================================================================================================
+             	//Reject ==================================================================================================================
+             	//The workflow specific user and verification code
+				payload = [user : idToImpersonate, code : rejectCode]
+				
+				//Encrypt this payload
+				encryptedPayload = openidm.encrypt(payload,"AES/CBC/PKCS5Padding","openidm-sym-default")
+				
+				//Convert to string for easy transit
+				encryptedPayloadAsString = new groovy.json.JsonBuilder(encryptedPayload).toString()
+				
+				//Correctly encode the payload						
+				encodedEncryptedPayload = URLEncoder.encode(encryptedPayloadAsString, "UTF-8")
+				
+				//Build the URL
+				finalRejectURL = rejectEndpoint + "?payload=" + encodedEncryptedPayload
+             	execution.setVariable('finalRejectURL', finalRejectURL)
              	
-             	
+             	//Send email with links ===================================================================================================
+             	emailParams = [from : 'identity@example.com', to : enduserObject.result[0].mail, subject : 'Impersonation Request - Approval Required', type : 'text/html',
+             			body : " <![CDATA[<html><body>Operator with Id " + startUserId + " would like access to your account for " + lengthOfImpersonation+ " mins. <br/><br/><a href=" + finalApproveURL + ">Approve</a> or <a href=" + finalRejectURL + ">Reject</a> ?</body></html>]]>" ]
+             			
+                openidm.action("external/email", "send", emailParams)
+                
              	
             </script>
         </scriptTask>
