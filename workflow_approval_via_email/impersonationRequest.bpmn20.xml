@@ -144,6 +144,7 @@
             </script>
         </scriptTask>
         
+        <sequenceFlow id="sequenceFlow-2d66e79d-58f8-4527-8b59-a5bb741bcbbz" sourceRef="cleanupRequestingUser" targetRef="end"></sequenceFlow>
         
         <sequenceFlow id="sequenceFlow-2d66e79d-58f8-4527-8b59-a5bb741bcbbb" sourceRef="userDecisionMadeGateway" targetRef="end">
             <conditionExpression xsi:type="tFormalExpression"><![CDATA[${userDecision=='reject'}]]></conditionExpression>
