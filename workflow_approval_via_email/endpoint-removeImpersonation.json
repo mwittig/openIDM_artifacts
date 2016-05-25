@@ -1,0 +1,5 @@
+{
+    "context" : "endpoint/removeImpersonation",
+    "type" : "groovy",
+    "file" : "script/removeImpersonation.groovy"
+}

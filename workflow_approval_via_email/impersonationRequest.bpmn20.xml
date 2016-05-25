@@ -12,11 +12,11 @@
         <userTask id="userAccessRequest" name="Impersonation Request" activiti:assignee="${startUserId}">
             <extensionElements>
                 <activiti:formProperty id="idToImpersonate" name="User to Impersonate " type="string" required="true"></activiti:formProperty>
-                <activiti:formProperty id="lengthOfImpersonation" name="Impersonation Length (minutes)" type="enum" required="true">
-                    <activiti:value id="5" name="5"></activiti:value>
+                <activiti:formProperty id="lengthOfImpersonation" name="Impersonation Length (minutes)" type="enum" required="true" default="1">
+                    <activiti:value id="1" name="1"></activiti:value>
+                    <activiti:value id="2" name="2"></activiti:value>
+                    <activiti:value id="5" name="3"></activiti:value>
                     <activiti:value id="10" name="10"></activiti:value>
-                    <activiti:value id="15" name="15"></activiti:value>
-                    <activiti:value id="30" name="30"></activiti:value>
                 </activiti:formProperty>
             </extensionElements>
         </userTask>
@@ -123,7 +123,27 @@
             </script>
         </scriptTask>
     
-        <sequenceFlow id="sequenceFlow-7c083ca7-f4e4-4c01-80ef-7b50f93f6afc" sourceRef="patchRequestingUser" targetRef="end"></sequenceFlow>
+        <sequenceFlow id="sequenceFlow-7c083ca7-f4e4-4c01-80ef-7b50f93f6afc" sourceRef="patchRequestingUser" targetRef="timer"></sequenceFlow>
+        
+        <intermediateCatchEvent id="timer">
+  			<timerEventDefinition>
+    			<timeDuration>PT${lengthOfImpersonation}M</timeDuration>
+  			</timerEventDefinition>
+		</intermediateCatchEvent>
+        
+        <sequenceFlow id="sequenceFlow-2d66e79d-58f8-4527-8b59-a5bb741bcbbc" sourceRef="timer" targetRef="cleanupRequestingUser"></sequenceFlow>
+
+        <scriptTask name="Cleanup User" id="cleanupRequestingUser" scriptFormat="groovy" activiti:autoStoreVariables="false">
+            <script>
+                
+                queryParams = ["_queryFilter": '/userName eq "'+startUserId+'"']
+                userToPatch = openidm.query("managed/user", queryParams)
+ 
+                patchParams = [[operation:'replace', field: 'idToImpersonate', value : ""]]
+                openidm.patch('managed/user/'+userToPatch.result[0]._id, null, patchParams)
+            </script>
+        </scriptTask>
+        
         
         <sequenceFlow id="sequenceFlow-2d66e79d-58f8-4527-8b59-a5bb741bcbbb" sourceRef="userDecisionMadeGateway" targetRef="end">
             <conditionExpression xsi:type="tFormalExpression"><![CDATA[${userDecision=='reject'}]]></conditionExpression>
