@@ -1,0 +1,29 @@
+	
+{
+    "globalDecorators": {
+        "audit": "My static route",
+        "capture": "all"
+    },
+    "handler": {
+        "name": "OpenIDM impersonation route",
+        "type": "Chain",
+        "config": {
+            "filters": [
+                {
+                    "name": "Add IDM user service",
+                    "type": "HeaderFilter",
+                    "config": {
+                        "messageType": "REQUEST",
+                        "add": {
+                            "X-OpenIDM-Username": [ "openidm-admin" ],
+                            "X-OpenIDM-Password": [ "Passw0rd" ]
+                        }
+                    }
+                }    
+            ],
+            "handler": "ClientHandler"
+        }
+    },
+    "baseURI": "http://openidm.example.com:8081",
+    "condition": "${matches(request.uri.path, '/openidm/endpoint/approveImpersonation.*') or matches(request.uri.path, '/openidm/endpoint/rejectImpersonation.*')}"
+}
