@@ -54,7 +54,7 @@ endpoint that verifies the code and updates the user record if the codes match. 
 <br/>
 <b>relationships_as_managed_objects</b>
 <br/>
-This samples models relationships between different managed objects, as managed objects themselves.  An example is the relationship between a parent and child, being handled via a new managed object
+This sample models relationships between different managed objects, as managed objects themselves.  An example is the relationship between a parent and child, being handled via a new managed object
 type called family.  This is implemented via basic managed object hook scripts, such as onDelete, postCreate and so on.  Copy the scripts to the appropriate folder. An endpoint is used to create the 
 child object, in order to capture the creators _id and store that server side.
 <br/>
@@ -62,5 +62,12 @@ The endpoint to create a child is handled via ../openidm/endpoint/childManager?_
 <br/>
 A full write up is available here - http://identityrelationshipmanagement.blogspot.co.uk/2015/08/openidm-relationships-as-first-class.html
 <br/>
-
+<br/>
+<b>workflow_approval_via_email</b>
+<br/>
+This sample is an extension to a basic access request workflow, but the approve/reject process uses encrypted links sent to the approver over email.  Copy the appropriate IDM files in place
+and also setup OpenIG to add an authentication header in order to get to the custom endpoints.
+<br/>
+A full write up is available here - http://theidentitycookbook.com
+<br/>
 
