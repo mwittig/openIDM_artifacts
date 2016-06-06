@@ -1,0 +1,39 @@
+{
+    "workflowAccess" : [
+        {
+            "propertiesCheck" : {
+                "property" : "_id",
+                "matches" : "createRole*",
+                "requiresRole" : "role-admins"
+            }
+        },
+        {
+            "propertiesCheck" : {
+                "property" : "_id",
+                "matches" : "deleteRole*",
+                "requiresRole" : "role-admins"
+            }
+        },
+        {
+            "propertiesCheck" : {
+                "property" : "_id",
+                "matches" : "addRoleToUser*",
+                "requiresRole" : "role-admins"
+            }
+        },
+        {
+            "propertiesCheck" : {
+                "property" : "_id",
+                "matches" : "removeRoleFromUser*",
+                "requiresRole" : "role-admins"
+            }
+        },
+        {
+            "propertiesCheck" : {
+                "property" : "_id",
+                "matches" : ".*",
+                "requiresRole" : "openidm-admin"
+            }
+        }
+    ]
+}
