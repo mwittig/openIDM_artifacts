@@ -3,6 +3,13 @@
         {
             "propertiesCheck" : {
                 "property" : "_id",
+                "matches" : "requestRole*",
+                "requiresRole" : "openidm-authorized"
+            }
+        },
+        {
+            "propertiesCheck" : {
+                "property" : "_id",
                 "matches" : "createRole*",
                 "requiresRole" : "role-admins"
             }

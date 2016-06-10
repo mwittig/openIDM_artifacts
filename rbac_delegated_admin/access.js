@@ -49,6 +49,12 @@ var httpAccessConfig = {
 	"configs" : [
 			{
 				"pattern" : "managed/role",
+				"roles" : "openidm-authorized",
+				"methods" : "query",
+				"actions" : "*"
+			},
+			{
+				"pattern" : "managed/role",
 				"roles" : "role-admins",
 				"methods" : "*",
 				"actions" : "*"
